@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>목소리꽃 · Voice Bloom</title>
+<meta name="description" content="Turn a loved one's voice into a one-of-a-kind blossoming tree. 소중한 사람의 목소리가 꽃나무로 피어납니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c1028; --card:rgba(255,255,255,.05); --line:rgba(255,255,255,.1);
+    --text:#f1eefc; --muted:#a3a6c9; --accent:#ffb8cb; --accent2:#cbb8ff;
+    --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    --serif:"Noto Serif KR","Batang","AppleMyungjo",Georgia,serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 20% 0%,#232a5e 0%,transparent 55%),var(--bg);
+    color:var(--text);font:15px/1.6 var(--sans);padding:0 16px 60px}
+  button,label.btn{font:inherit;color:inherit;cursor:pointer}
+  header{max-width:1080px;margin:0 auto;padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .logo{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:1px}
+  .logo span{color:var(--accent)}
+  .lang{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--muted)}
+  .lang:hover{color:var(--text)}
+  .wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:48px;align-items:start}
+  .stage{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45);border:1px solid var(--line)}
+  #poster{display:block;width:100%;aspect-ratio:3/4}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+    background:rgba(8,10,30,.72);backdrop-filter:blur(6px);text-align:center;padding:16px}
+  .ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;font-size:38px;font-weight:200;
+    font-variant-numeric:tabular-nums;border:2px solid rgba(255,184,203,.5);transition:box-shadow .08s}
+  .overlay p{margin:0;color:var(--muted)}
+  h1{font-family:var(--serif);font-weight:600;font-size:36px;line-height:1.35;margin:10px 0 14px;letter-spacing:-.5px}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lead{color:var(--muted);margin:0 0 24px}
+  .btns{display:flex;flex-direction:column;gap:10px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--card);
+    border-radius:14px;padding:13px 18px;transition:.2s;text-align:center}
+  .btn:hover{background:rgba(255,255,255,.1)}
+  .btn.primary{border:0;color:#2a1222;font-weight:700;background:linear-gradient(135deg,#ffc8d6,#d9c9ff);box-shadow:0 10px 30px rgba(255,170,200,.25)}
+  .btn.danger{color:#ff9a9a;border-color:rgba(255,120,120,.4)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .row .btn{flex:1;min-width:130px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .field>span{font-size:12px;color:var(--muted)}
+  input[type=text]{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);font:inherit;outline:none;width:100%}
+  input[type=text]:focus{border-color:rgba(255,184,203,.55)}
+  .seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px}
+  .seg button{flex:1;border:0;background:none;padding:8px;border-radius:9px;color:var(--muted)}
+  .seg button.on{background:rgba(255,255,255,.12);color:var(--text)}
+  .reading{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0 18px;font-size:14px}
+  .reading b{color:var(--accent);font-weight:600}
+  .members{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 8px 5px 12px;font-size:13px}
+  .chip i{font-style:normal;width:10px;height:10px;border-radius:50%}
+  .chip button{border:0;background:none;color:var(--muted);padding:0 4px;font-size:14px;line-height:1}
+  .chip button:hover{color:#ff9a9a}
+  .sharebox{margin-top:12px;background:rgba(255,184,203,.07);border:1px solid rgba(255,184,203,.3);border-radius:14px;padding:12px 14px}
+  .sharebox input{font-size:12px;padding:9px 10px}
+  .sharebox small{display:block;color:var(--muted);margin-top:8px;font-size:12px}
+  details{margin-top:26px;color:var(--muted);font-size:14px}
+  summary{cursor:pointer;color:var(--text)}
+  details ul{padding-left:18px;margin:10px 0 0}
+  .privacy{margin-top:16px;font-size:12px;color:var(--muted)}
+  #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:rgba(30,30,60,.95);
+    border:1px solid var(--line);padding:10px 18px;border-radius:999px;transition:.35s;pointer-events:none;max-width:calc(100% - 32px);z-index:5}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  @media (max-width:860px){
+    .wrap{grid-template-columns:1fr;gap:26px}
+    h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" id="logo"></div>
+  <button class="lang" id="langBtn"></button>
+</header>
+<div class="wrap">
+  <div class="stage">
+    <canvas id="poster" width="750" height="1000"></canvas>
+    <div class="overlay" id="recOverlay" hidden>
+      <div class="ring" id="ring">10</div>
+      <p data-i="listening"></p>
+      <button class="btn primary" id="stopBtn" style="min-width:160px" data-i="done"></button>
+    </div>
+  </div>
+
+  <div>
+    <section id="intro">
+      <h1 id="introTitle"></h1>
+      <p class="lead" id="introLead"></p>
+      <label class="field"><span data-i="whoLabel"></span>
+        <input type="text" id="who" maxlength="12" data-ph="whoPh"></label>
+      <div class="btns">
+        <button class="btn primary" id="recBtn" data-i="rec"></button>
+        <label class="btn"><span data-i="upload"></span><input type="file" id="file" accept="audio/*,video/*" hidden></label>
+        <button class="btn" id="sampleBtn" data-i="sample"></button>
+        <button class="btn" id="backBtn" data-i="back" hidden></button>
+      </div>
+      <p class="privacy" data-i="privacy"></p>
+    </section>
+
+    <section id="result" hidden>
+      <h1 id="resTitle" style="font-size:30px"></h1>
+      <div class="reading" id="reading"></div>
+      <div class="field"><span data-i="membersLabel"></span><div class="members" id="members"></div></div>
+      <label class="field"><span data-i="titleLabel"></span>
+        <input type="text" id="title" maxlength="24"></label>
+      <div class="field"><span data-i="moodLabel"></span>
+        <div class="seg" id="themeSeg"><button data-theme="night" class="on" data-i="night"></button><button data-theme="paper" data-i="paper"></button></div></div>
+      <div class="row">
+        <button class="btn primary" id="addBtn" data-i="add"></button>
+        <button class="btn" id="shareBtn" data-i="share"></button>
+      </div>
+      <div class="sharebox" id="shareBox" hidden>
+        <input type="text" id="shareUrl" readonly>
+        <small data-i="shareHelp"></small>
+      </div>
+      <div class="row">
+        <button class="btn" id="replayBtn" data-i="replay"></button>
+        <button class="btn" id="saveBtn" data-i="save"></button>
+      </div>
+      <div class="row"><button class="btn" id="newBtn" data-i="reset"></button></div>
+    </section>
+
+    <details>
+      <summary data-i="howTitle"></summary>
+      <ul id="howList"></ul>
+    </details>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ========== 다국어 (한국어 / English) ========== */
+const T = {
+  ko: {
+    docTitle: '목소리꽃', logo: '목소리<span>꽃</span>', langBtn: 'EN',
+    listening: '듣고 있어요… 편하게 말씀해 주세요', done: '완료',
+    introTitle0: '소중한 사람의 목소리가<br><em>꽃나무</em>로 피어납니다', introTitleN: '숲에 <em>목소리</em>를 더해요',
+    introLead0: '목소리의 높낮이, 크기, 말의 리듬을 읽어 세상에 단 하나뿐인 꽃나무를 그려요. 가족이 한 명씩 목소리를 더하면 우리 가족만의 숲이 자라요.',
+    introLeadN: n => `지금 ${n}그루가 자라고 있어요. 이름을 적고 목소리를 들려주면 숲에 새 나무가 자라요.`,
+    whoLabel: '누구의 목소리인가요?', whoPh: '예) 엄마, 지우, 할아버지',
+    rec: '🎙 지금 녹음하기 (최대 10초)', upload: '📁 음성 파일 올리기 (음성 메시지 등)', sample: '✨ 샘플 목소리로 보기', back: '← 숲으로 돌아가기',
+    privacy: '🔒 녹음과 분석은 모두 이 기기 안에서만 이뤄져요. 목소리는 어디에도 전송되지 않고, 공유 링크에는 나무 모양 정보만 담겨요.',
+    res1: '목소리가 <em>피었어요</em>', resN: '가족 숲이 <em>자라고 있어요</em>',
+    membersLabel: '숲의 목소리들', titleLabel: '그림 제목', titlePh1: '예) 엄마의 목소리', titlePhN: '예) 우리 가족 숲',
+    moodLabel: '분위기', night: '밤하늘', paper: '한지',
+    add: '➕ 목소리 더하기', share: '🔗 가족에게 공유',
+    shareHelp: '이 링크를 가족 단톡방에 보내 주세요. 링크를 연 가족이 자기 목소리를 더하면, 나무가 한 그루 늘어난 새 링크가 만들어져요.',
+    replay: '▶ 다시 피우기', save: '💾 그림 저장', reset: '🗑 숲 새로 시작', resetConfirm: '정말 숲을 지울까요? 한 번 더 누르세요',
+    howTitle: '나무는 어떻게 만들어지나요?',
+    how: ['<b>왼쪽 가지는 말의 시작, 오른쪽 가지는 말의 끝</b>이에요.', '목소리가 높아지는 순간의 가지는 하늘로 곧게, 낮아지는 순간의 가지는 옆으로 늘어져요.',
+      '크게 말한 부분일수록 꽃이 크고 풍성해요. 잠깐 쉰 부분은 꽃 없이 빈 가지로 남아요.', '평균 음높이가 꽃의 색을, 말의 리듬이 가지 수를 정해요.',
+      '땅 아래 뿌리는 실제 목소리의 파형이에요.', '가족 숲에는 최대 6그루까지 심을 수 있어요.'],
+    removeTip: '이 나무 빼기', removeConfirm: '정말 뺄까요?', noName: '이름 없음', me: '나',
+    tQuiet: '소리가 너무 작아요. 조금 더 크게 말해 주세요', tShort: '조금 더 길게(1초 이상) 말해 주세요', tBad: '이 소리는 읽을 수 없어요',
+    tMic: '마이크를 쓸 수 없어요. 브라우저의 마이크 권한을 확인해 주세요', tRecFail: '녹음을 읽지 못했어요. 다시 시도해 주세요',
+    tFileFail: '이 파일 형식은 읽지 못했어요 (mp3, m4a, wav 권장)', tMax: n => `숲에는 최대 ${n}그루까지 심을 수 있어요`,
+    tRemoved: name => `${name}를 숲에서 뺐어요`, tCopied: '공유 링크를 복사했어요. 가족 단톡방에 붙여 넣어 주세요', tCopyManual: '링크를 길게 눌러 복사해 주세요',
+    tSaved: '고화질 그림(2250×3000)을 저장했어요. 액자 인쇄에 쓸 수 있어요', tLinkFail: '공유 링크를 읽지 못했어요. 링크가 잘렸는지 확인해 주세요',
+    pEmptyTitle: '목소리를 들려주세요', pEmptySub: '말하는 순간, 한 그루의 꽃나무가 자라요', pForest: '우리 가족 숲',
+    pNameTitle: name => `${name}의 목소리`, pPrecious: '소중한 목소리',
+    pSub1: (d, dur, syl, hz, pal) => `${d} · ${dur}초 · ${syl}음절 · ${hz}${pal}`, pSubN: (d, n) => `${d} · ${n}개의 목소리로 자란 숲`, pBrand: '목 소 리 꽃',
+    pal: { maple: '단풍', gold: '금빛', lavender: '라벤더', cherry: '벚꽃', water: '물빛' },
+    tone: { none: '음높이를 읽기 어려운 소리', low: '낮고 따뜻한 목소리', mid: '부드러운 중간 높이의 목소리', high: '맑고 높은 목소리' },
+    expr: { wide: '높낮이가 풍부해서 가지가 넓게 퍼졌어요', mid: '높낮이가 적당해서 가지가 고르게 뻗었어요', calm: '차분하게 말해서 가지가 곧게 자랐어요' },
+    readMember: (name, tone, pal, syl, expr) => [[name ? name + '님은 ' : ''], [tone, 1], ['라서 '], [pal, 1], [' 꽃이 피었어요.'], ['\n'], [`${syl}번의 말소리 리듬으로 가지를 나누었고, ${expr}.`]],
+    readLink: names => [[names, 1], ['의 목소리로 자란 숲이 도착했어요.'], ['\n'], ['아래 '], ['➕ 목소리 더하기', 1], ['로 내 나무를 심고, 새 링크를 다시 가족에게 보내 주세요.']],
+    shareTitle: '목소리꽃 가족 숲', shareText: names => `${names}의 목소리로 자란 숲이에요. 당신의 목소리도 더해 주세요 🌸`,
+    sampleNames: ['엄마', '아빠', '지우', '할머니', '할아버지', '이모'], filePrefix: '목소리꽃',
+    dateLocale: 'ko-KR'
+  },
+  en: {
+    docTitle: 'Voice Bloom', logo: 'Voice <span>Bloom</span>', langBtn: '한국어',
+    listening: 'Listening… speak naturally', done: 'Done',
+    introTitle0: 'A loved one’s voice,<br>blooming into a <em>tree</em>', introTitleN: 'Add a <em>voice</em> to the forest',
+    introLead0: 'We read the rise and fall, the loudness and the rhythm of a voice to draw a blossoming tree that exists nowhere else. Add your family one voice at a time and grow a forest that is yours alone.',
+    introLeadN: n => `${n} ${n === 1 ? 'tree is' : 'trees are'} growing. Type a name and share a voice to plant a new tree.`,
+    whoLabel: 'Whose voice is this?', whoPh: 'e.g. Mom, Lily, Grandpa',
+    rec: '🎙 Record now (up to 10s)', upload: '📁 Upload a voice file (voice memo, etc.)', sample: '✨ Try a sample voice', back: '← Back to the forest',
+    privacy: '🔒 Recording and analysis happen entirely on this device. Your voice is never uploaded — share links carry only the shape of the tree.',
+    res1: 'Your voice has <em>bloomed</em>', resN: 'Your family forest is <em>growing</em>',
+    membersLabel: 'Voices in this forest', titleLabel: 'Title', titlePh1: 'e.g. Mom’s Voice', titlePhN: 'e.g. Our Family Forest',
+    moodLabel: 'Mood', night: 'Night sky', paper: 'Hanji paper',
+    add: '➕ Add a voice', share: '🔗 Share with family',
+    shareHelp: 'Send this link to your family chat. When someone opens it and adds their voice, a new link with one more tree is created.',
+    replay: '▶ Bloom again', save: '💾 Save artwork', reset: '🗑 Start a new forest', resetConfirm: 'Erase this forest? Tap again to confirm',
+    howTitle: 'How is the tree made?',
+    how: ['<b>Left branches are the start of what was said, right branches the end.</b>', 'Where the voice rises, branches reach upward; where it falls, they spread and droop.',
+      'Louder moments grow bigger, fuller blossoms. Pauses leave bare branches.', 'The average pitch picks the blossom color; the rhythm of speech sets how the branches split.',
+      'The roots below the ground are the real waveform of the voice.', 'A family forest can hold up to 6 trees.'],
+    removeTip: 'Remove this tree', removeConfirm: 'Remove?', noName: 'Unnamed', me: 'Me',
+    tQuiet: 'That was too quiet. Please speak a little louder', tShort: 'Please speak a little longer (1 second or more)', tBad: 'We couldn’t read this sound',
+    tMic: 'Microphone unavailable. Please check your browser’s microphone permission', tRecFail: 'We couldn’t read the recording. Please try again',
+    tFileFail: 'This file type couldn’t be read (mp3, m4a or wav recommended)', tMax: n => `A forest can hold up to ${n} trees`,
+    tRemoved: name => `Removed ${name} from the forest`, tCopied: 'Link copied — paste it into your family chat', tCopyManual: 'Press and hold the link to copy it',
+    tSaved: 'Saved a high-resolution artwork (2250×3000), ready for framing', tLinkFail: 'We couldn’t read this share link. It may have been cut off',
+    pEmptyTitle: 'Let me hear a voice', pEmptySub: 'The moment you speak, a blossoming tree begins to grow', pForest: 'Our Family Forest',
+    pNameTitle: name => `${name}’s Voice`, pPrecious: 'A Precious Voice',
+    pSub1: (d, dur, syl, hz, pal) => `${d} · ${dur}s · ${syl} syllables · ${hz}${pal}`, pSubN: (d, n) => `${d} · A forest grown from ${n} voices`, pBrand: 'V O I C E   B L O O M',
+    pal: { maple: 'Maple', gold: 'Golden', lavender: 'Lavender', cherry: 'Cherry Blossom', water: 'Sky Blue' },
+    tone: { none: 'a voice whose pitch was hard to read', low: 'a low, warm voice', mid: 'a soft, mid-range voice', high: 'a clear, high voice' },
+    expr: { wide: 'its lively rise and fall spread the branches wide', mid: 'its gentle rise and fall spread the branches evenly', calm: 'its calm tone let the branches grow straight' },
+    readMember: (name, tone, pal, syl, expr) => [[name ? name + ' has ' : 'This is '], [tone, 1], [', so '], [pal, 1], [' blossoms bloomed.'], ['\n'], [`${syl} beats of speech shaped the branches, and ${expr}.`]],
+    readLink: names => [['A forest grown from the voices of '], [names, 1], [' has arrived.'], ['\n'], ['Tap '], ['➕ Add a voice', 1], [' to plant your own tree, then send the new link back to your family.']],
+    shareTitle: 'Voice Bloom family forest', shareText: names => `A forest grown from the voices of ${names}. Add yours too 🌸`,
+    sampleNames: ['Mom', 'Dad', 'Lily', 'Grandma', 'Grandpa', 'Aunt Jo'], filePrefix: 'VoiceBloom',
+    dateLocale: 'en-US'
+  }
+};
+let LANG = (() => {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q === 'ko' || q === 'en') return q;
+  try { const s = localStorage.getItem('vb.lang'); if (s === 'ko' || s === 'en') return s; } catch {}
+  return /^ko/i.test(navigator.language || '') ? 'ko' : 'en';
+})();
+const t = k => T[LANG][k];
+
+/* ========== 유틸 ========== */
+const $ = s => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = x => 1 - Math.pow(1 - x, 3);
+const MAX_MEMBERS = 6;
+function rng(seed) {
+  return function () {
+    seed = seed + 0x6D2B79F5 | 0;
+    let x = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x;
+    return ((x ^ x >>> 14) >>> 0) / 4294967296;
+  };
+}
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), 3200);
+}
+function sampleAt(arr, u) {
+  const x = clamp(u) * (arr.length - 1), i = Math.floor(x), f = x - i;
+  return arr[i] * (1 - f) + (arr[Math.min(i + 1, arr.length - 1)] || 0) * f;
+}
+let actx = null;
+function getCtx() {
+  if (!actx) { const C = window.AudioContext || window.webkitAudioContext; actx = new C(); }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+/* ========== 목소리 분석 ========== */
+function analyze(buffer) {
+  const sr0 = buffer.sampleRate;
+  let x = new Float32Array(buffer.length);
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const d = buffer.getChannelData(c);
+    for (let i = 0; i < d.length; i++) x[i] += d[i] / buffer.numberOfChannels;
+  }
+  // 앞뒤 무음 자르기, 최대 10초
+  let peak = 0; for (let i = 0; i < x.length; i++) peak = Math.max(peak, Math.abs(x[i]));
+  if (peak < 0.01) throw new Error('quiet');
+  const th = peak * 0.06; let a = 0, b = x.length - 1;
+  while (a < b && Math.abs(x[a]) < th) a++;
+  while (b > a && Math.abs(x[b]) < th) b--;
+  a = Math.max(0, a - Math.floor(sr0 * 0.05)); b = Math.min(x.length - 1, b + Math.floor(sr0 * 0.1));
+  b = Math.min(b, a + sr0 * 10);
+  x = x.slice(a, b);
+  const duration = x.length / sr0;
+  if (duration < 0.4) throw new Error('short');
+
+  // 약 12kHz로 줄여서 빠르게 분석
+  const dec = Math.max(1, Math.round(sr0 / 12000)), sr = sr0 / dec;
+  const y = new Float32Array(Math.floor(x.length / dec));
+  for (let i = 0; i < y.length; i++) { let s = 0; for (let k = 0; k < dec; k++) s += x[i * dec + k]; y[i] = s / dec; }
+
+  const N = 512, hop = 256, env = [], pitch = [];
+  for (let s = 0; s + N <= y.length; s += hop) {
+    let e = 0;
+    for (let i = 0; i < N; i++) e += y[s + i] * y[s + i];
+    env.push(Math.sqrt(e / N));
+  }
+  if (env.length < 4) throw new Error('short');
+  const maxE = Math.max(...env);
+  const minLag = Math.floor(sr / 500), maxLag = Math.floor(sr / 70);
+  for (let f = 0; f < env.length; f++) {
+    if (env[f] < maxE * 0.15) { pitch.push(0); continue; }
+    const s = f * hop; let best = 0, bestLag = 0;
+    for (let lag = minLag; lag <= maxLag; lag++) {
+      let num = 0, e1 = 0, e2 = 0;
+      for (let i = 0; i < N - lag; i++) { const p = y[s + i], q = y[s + i + lag]; num += p * q; e1 += p * p; e2 += q * q; }
+      const r = num / Math.sqrt(e1 * e2 + 1e-12);
+      if (r > best) { best = r; bestLag = lag; }
+    }
+    pitch.push(best > 0.55 ? sr / bestLag : 0);
+  }
+  const envN = env.map(v => v / maxE);
+  const voiced = pitch.filter(v => v > 0).sort((p, q) => p - q);
+  const median = voiced.length ? voiced[Math.floor(voiced.length / 2)] : 0;
+  const semi = f => 12 * Math.log2(f / median);
+  const rangeSemi = voiced.length > 4 ? semi(voiced[Math.floor(voiced.length * 0.9)]) - semi(voiced[Math.floor(voiced.length * 0.1)]) : 0;
+
+  // 음높이 곡선 (-1 낮음 ~ +1 높음), 무성음 구간은 이웃 값으로 채움
+  let pc = pitch.map(f => f > 0 && median ? clamp(semi(f) / 6, -1, 1) : null);
+  let last = 0; pc = pc.map(v => v === null ? last : (last = v));
+  pc = pc.map((v, i) => (v + (pc[i - 1] ?? v) + (pc[i + 1] ?? v)) / 3);
+
+  // 음절 수 (소리 크기의 봉우리)
+  const sm = envN.map((v, i) => { let s = 0, c = 0; for (let k = -2; k <= 2; k++) if (envN[i + k] !== undefined) { s += envN[i + k]; c++; } return s / c; });
+  let syl = 0, lastPeak = -99, valley = 1;
+  for (let i = 1; i < sm.length - 1; i++) {
+    valley = Math.min(valley, sm[i]);
+    if (sm[i] > 0.3 && sm[i] >= sm[i - 1] && sm[i] > sm[i + 1] && i - lastPeak > 5 && valley < sm[i] * 0.8) { syl++; lastPeak = i; valley = sm[i]; }
+  }
+  syl = Math.max(1, syl);
+
+  // 같은 목소리 → 같은 나무
+  let h = 2166136261;
+  const mix = v => { h ^= v; h = Math.imul(h, 16777619); };
+  for (let i = 0; i < 64; i++) { mix(Math.round(sampleAt(envN, i / 63) * 15)); mix(Math.round((sampleAt(pc, i / 63) + 1) * 7)); }
+  mix(Math.round(median));
+
+  const out = new AudioBuffer({ length: x.length, sampleRate: sr0, numberOfChannels: 1 });
+  out.copyToChannel(x, 0);
+  return { duration, env: envN, pitch: pc, median, rangeSemi, syl, seed: h >>> 0, audio: out };
+}
+
+/* ========== 공유용 압축 (목소리 대신 나무 모양 정보만) ========== */
+const Q = 48;
+function compact(f, name) {
+  const q = (arr, map) => Array.from({ length: Q }, (_, i) => Math.round(clamp(map(sampleAt(arr, i / (Q - 1)))) * 35).toString(36)).join('');
+  return { n: name, md: Math.round(f.median), d: Math.round(f.duration * 10), s: f.syl, r: Math.round(f.rangeSemi * 10), sd: f.seed,
+    e: q(f.env, v => v), p: q(f.pitch, v => (v + 1) / 2) };
+}
+function expand(m) {
+  const ok = m && typeof m.n === 'string' && [m.md, m.d, m.s, m.r, m.sd].every(Number.isFinite) &&
+    typeof m.e === 'string' && typeof m.p === 'string' && m.e.length === Q && m.p.length === Q && /^[0-9a-z]+$/.test(m.e + m.p);
+  if (!ok) throw new Error('bad');
+  return { name: m.n.slice(0, 12), median: clamp(m.md, 0, 1000), duration: clamp(m.d / 10, 0.4, 10), syl: clamp(m.s, 1, 60),
+    rangeSemi: clamp(m.r / 10, 0, 48), seed: m.sd >>> 0,
+    env: [...m.e].map(c => clamp(parseInt(c, 36) / 35)), pitch: [...m.p].map(c => clamp(parseInt(c, 36) / 35) * 2 - 1) };
+}
+function encodeForest() {
+  const json = JSON.stringify({ v: 1, t: S.title, th: S.theme, dt: S.date, m: S.members.map(m => m.c) });
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function decodeForest(code) {
+  const json = decodeURIComponent(escape(atob(code.replace(/-/g, '+').replace(/_/g, '/'))));
+  const o = JSON.parse(json);
+  if (!o || !Array.isArray(o.m) || !o.m.length) throw new Error('bad');
+  return o;
+}
+
+/* ========== 나무 만들기 ========== */
+const PALETTES = [
+  { max: 125, key: 'maple', c: ['#ff8a5c', '#e2553f', '#ffc07a'] },
+  { max: 160, key: 'gold', c: ['#ffd25e', '#f0a93a', '#fff0b8'] },
+  { max: 195, key: 'lavender', c: ['#c6b0ff', '#9478ea', '#ece4ff'] },
+  { max: 240, key: 'cherry', c: ['#ffbfd2', '#ff8db0', '#fff0f5'] },
+  { max: 1e9, key: 'water', c: ['#9fe0ff', '#62bdea', '#e3f7ff'] },
+];
+const palName = p => t('pal')[p.key];
+function genVoiceTree(f) {
+  const r = rng(f.seed);
+  const palette = f.median ? PALETTES.find(p => f.median < p.max) : PALETTES[2];
+  const maxD = clamp(6 + (f.duration > 2.5 ? 1 : 0) + (f.syl > 7 ? 1 : 0), 6, 8);
+  const spread = 0.34 + clamp(f.rangeSemi / 12) * 0.3;
+  const p3 = clamp(f.syl / 20, 0.1, 0.4);
+  const E = u => sampleAt(f.env, u), P = u => sampleAt(f.pitch, u);
+  function node(d, len, w, lo, hi) {
+    const u = (lo + hi) / 2;
+    const n = { d, len, w, a: 0, ph: r() * 6.283, children: [], leaves: [] };
+    if (d < maxD) {
+      const k = (d >= 1 && d <= 3 && r() < p3) ? 3 : 2;
+      for (let i = 0; i < k; i++) {
+        const clo = lo + (hi - lo) * i / k, chi = lo + (hi - lo) * (i + 1) / k, cu = (clo + chi) / 2;
+        const pv = P(cu);
+        const c = node(d + 1, len * (0.64 + 0.1 * r() + 0.12 * E(cu)) * (1 + 0.1 * pv), w * 0.68, clo, chi);
+        c.a = (i - (k - 1) / 2) * spread * 1.6 * (1 - 0.35 * pv) + (r() - 0.5) * 0.22;
+        n.children.push(c);
+      }
+    }
+    const e = E(u);
+    if (d >= maxD - 1 && e > 0.12) {
+      const cnt = d === maxD ? 1 + Math.round(e * 4) : 1;
+      for (let i = 0; i < cnt; i++) n.leaves.push({
+        ox: (r() - 0.5) * 0.16, oy: (r() - 0.5) * 0.16, rot: r() * 6.283,
+        s: 0.02 + e * 0.045 + r() * 0.01, c: P(u) > 0.3 ? 2 : P(u) < -0.3 ? 1 : 0, delay: r()
+      });
+    }
+    return n;
+  }
+  const root = node(0, 1, 0.08, 0, 1);
+  root.a = P(0.5) * 0.06;
+  return { maxD, palette, root };
+}
+
+/* ========== 그리기 ========== */
+const THEMES = {
+  night: { bg: ['#10163a', '#2b2353'], text: '#f3f0ff', sub: '#aeaad6', line: 'rgba(255,255,255,.28)', root: 'rgba(205,195,255,.4)',
+    trunk: ['#4a3328', '#5a3e30', '#6a4a39', '#7a5843', '#88654f', '#93715b', '#9d7c66', '#a68671', '#ae907b'], stars: true },
+  paper: { bg: ['#f8f3e9', '#efe5d3'], text: '#3a2d25', sub: '#8a786a', line: 'rgba(70,50,35,.3)', root: 'rgba(120,90,70,.35)',
+    trunk: ['#3b2a20', '#453226', '#4f3a2d', '#594334', '#634c3c', '#6d5544', '#775e4c', '#816754', '#8a705c'], stars: false },
+};
+const STARS = Array.from({ length: 90 }, (_, i) => { const r = rng(i * 99 + 7); return { x: r() * 750, y: r() * 560, s: r() * 1.4 + 0.3, ph: r() * 6.3 }; });
+const SERIF = '"Noto Serif KR", Batang, Georgia, serif';
+
+function drawFlower(ctx, x, y, rad, rot, col, light) {
+  if (rad < 2.4) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, rad, 0, 6.283); ctx.fill(); return; }
+  ctx.fillStyle = col;
+  for (let k = 0; k < 5; k++) {
+    const a = rot + k * 1.2566;
+    ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * rad * 0.5, y + Math.sin(a) * rad * 0.5, rad * 0.55, rad * 0.36, a, 0, 6.283); ctx.fill();
+  }
+  ctx.fillStyle = light; ctx.beginPath(); ctx.arc(x, y, rad * 0.22, 0, 6.283); ctx.fill();
+}
+function drawTree(ctx, tree, th, bx, by, scale, p, time) {
+  const step = 0.8 / (tree.maxD + 1), leafP = clamp((p - 0.74) / 0.26);
+  ctx.lineCap = 'round';
+  (function walk(n, x, y, ang) {
+    const g = ease(clamp((p - n.d * step) / step));
+    if (g <= 0) return;
+    const A = ang + n.a + Math.sin(time * 0.0011 + n.ph) * 0.006 * n.d;
+    const L = n.len * scale * g, x2 = x + Math.sin(A) * L, y2 = y - Math.cos(A) * L;
+    ctx.strokeStyle = th.trunk[Math.min(n.d, th.trunk.length - 1)];
+    ctx.lineWidth = Math.max(0.6, n.w * scale * (0.6 + 0.4 * g));
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x2, y2); ctx.stroke();
+    if (g < 1) return;
+    for (const c of n.children) walk(c, x2, y2, A);
+    if (leafP > 0) for (const lf of n.leaves) {
+      const lg = ease(clamp((leafP - lf.delay * 0.5) / 0.5));
+      if (lg <= 0) continue;
+      ctx.globalAlpha = 0.92;
+      drawFlower(ctx, x2 + lf.ox * scale, y2 + lf.oy * scale, lf.s * scale * lg, lf.rot, tree.palette.c[lf.c], '#fffaf0');
+      ctx.globalAlpha = 1;
+    }
+  })(tree.root, bx, by, 0);
+}
+function fitText(ctx, text, maxW, weight, size) {
+  let s = size;
+  do { ctx.font = `${weight} ${s}px ${SERIF}`; s -= 1; } while (ctx.measureText(text).width > maxW && s > 10);
+}
+function renderPoster(ctx, st, time) {
+  const th = THEMES[st.theme], W = 750, H = 1000, by = 690, ms = st.members, n = ms.length;
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, th.bg[0]); g.addColorStop(1, th.bg[1]);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  if (th.stars) for (const s of STARS) {
+    ctx.globalAlpha = 0.3 + 0.5 * Math.sin(time * 0.0015 + s.ph) ** 2; ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 6.283); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = th.line; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(n > 1 ? 50 : 110, by); ctx.lineTo(n > 1 ? 700 : 640, by); ctx.stroke();
+
+  // 나무들 (한 그루면 크게, 여러 그루면 나란히)
+  const x0 = n > 1 ? 70 : 135, x1 = n > 1 ? 680 : 615, slot = (x1 - x0) / Math.max(1, n);
+  const scale = n > 1 ? Math.min(84, slot / 3.1) : 108;
+  ms.forEach((m, i) => {
+    const cxm = x0 + slot * (i + 0.5), rw = n > 1 ? slot * 0.36 : 240;
+    const bars = n > 1 ? 40 : 120;
+    ctx.strokeStyle = th.root; ctx.lineWidth = n > 1 ? 1.6 : 2; ctx.lineCap = 'round';
+    for (let k = 0; k < bars; k++) {
+      const u = k / (bars - 1); if (u > m.rootU) break;
+      const v = sampleAt(m.f.env, u), x = cxm - rw + 2 * rw * u;
+      ctx.beginPath(); ctx.moveTo(x, by + 6); ctx.lineTo(x, by + 6 + Math.max(1, v * (n > 1 ? 45 : 70))); ctx.stroke();
+    }
+    drawTree(ctx, m.tree, th, cxm, by, scale, m.p, time);
+    if (n > 1) {
+      ctx.textAlign = 'center'; ctx.fillStyle = th.text;
+      fitText(ctx, m.f.name, slot - 10, 400, n > 4 ? 14 : 16);
+      ctx.fillText(m.f.name, cxm, by + 78);
+    }
+  });
+  if (!n) {
+    const pulse = 0.5 + 0.5 * Math.sin(time * 0.003);
+    const sg = ctx.createRadialGradient(375, by - 5, 0, 375, by - 5, 30);
+    sg.addColorStop(0, `rgba(255,190,215,${0.45 + 0.4 * pulse})`); sg.addColorStop(1, 'rgba(255,190,215,0)');
+    ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(375, by - 5, 30, 0, 6.283); ctx.fill();
+  }
+  // 글자
+  ctx.textAlign = 'center'; ctx.fillStyle = th.text;
+  const title = !n ? t('pEmptyTitle') : st.title || (n > 1 ? t('pForest') : (ms[0].f.name ? t('pNameTitle')(ms[0].f.name) : t('pPrecious')));
+  fitText(ctx, title, 640, 600, 34);
+  ctx.fillText(title, 375, 845);
+  ctx.fillStyle = th.sub;
+  let sub = t('pEmptySub');
+  if (n === 1) {
+    const f = ms[0].f, hz = f.median ? Math.round(f.median) + 'Hz ' : '';
+    sub = t('pSub1')(st.date, f.duration.toFixed(1), f.syl, hz, palName(ms[0].tree.palette));
+  } else if (n > 1) sub = t('pSubN')(st.date, n);
+  fitText(ctx, sub, 660, 400, 16);
+  ctx.fillText(sub, 375, 882);
+  ctx.font = `400 13px ${SERIF}`; ctx.globalAlpha = 0.7;
+  ctx.fillText(t('pBrand'), 375, 952); ctx.globalAlpha = 1;
+}
+
+/* ========== 상태 & 재생 ========== */
+const cv = $('#poster'), cx = cv.getContext('2d');
+const S = { members: [], theme: 'night', title: '', date: '', growing: null, growStart: -1, src: null, queue: [], reading: null };
+function today() { return new Date().toLocaleDateString(t('dateLocale'), LANG === 'en' ? { year: 'numeric', month: 'short', day: 'numeric' } : undefined).replace(/\.\s/g, '.').replace(/\.$/, ''); }
+function makeMember(f, c) { return { f, c, tree: genVoiceTree(f), p: 1, rootU: 1, audio: null }; }
+function fitCanvas() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || 480;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(w * 4 / 3 * dpr);
+}
+new ResizeObserver(fitCanvas).observe(cv);
+
+const now = () => performance.now() / 1000;
+function frame(time) {
+  const m = S.growing;
+  if (m && S.growStart >= 0) {
+    const el = now() - S.growStart;
+    m.p = clamp(el / (m.f.duration + 1.8)); m.rootU = clamp(el / m.f.duration);
+    if (m.p >= 1) { S.growStart = -1; S.growing = null; }
+  }
+  if (!S.growing && S.queue.length) grow(S.queue.shift());
+  cx.setTransform(cv.width / 750, 0, 0, cv.height / 1000, 0, 0);
+  renderPoster(cx, S, time);
+  requestAnimationFrame(frame);
+}
+function grow(m) {
+  if (S.src) { try { S.src.stop(); } catch {} S.src = null; }
+  if (S.growing && S.growing !== m) { S.growing.p = 1; S.growing.rootU = 1; }
+  m.p = 0; m.rootU = 0; S.growing = m; S.growStart = now() + 0.05;
+  if (m.audio) {
+    const ctx = getCtx();
+    S.src = ctx.createBufferSource(); S.src.buffer = m.audio; S.src.connect(ctx.destination); S.src.start(ctx.currentTime + 0.05);
+  }
+}
+function lastLocal() { for (let i = S.members.length - 1; i >= 0; i--) if (S.members[i].audio) return S.members[i]; return null; }
+
+/* ========== 화면 갱신 ========== */
+function setReading(parts) {
+  const el = $('#reading'); el.textContent = '';
+  for (const [txt, bold] of parts) {
+    if (txt === '\n') { el.append(document.createElement('br')); continue; }
+    if (bold) { const b = document.createElement('b'); b.textContent = txt; el.append(b); } else el.append(txt);
+  }
+}
+function renderReading() {
+  const rd = S.reading; if (!rd) return;
+  if (rd.type === 'link') { setReading(t('readLink')(S.members.map(m => m.f.name).join(', '))); return; }
+  const m = rd.m, f = m.f, tn = t('tone'), ex = t('expr');
+  const tone = !f.median ? tn.none : f.median < 160 ? tn.low : f.median < 220 ? tn.mid : tn.high;
+  const expr = f.rangeSemi > 7 ? ex.wide : f.rangeSemi > 3 ? ex.mid : ex.calm;
+  setReading(t('readMember')(f.name, tone, palName(m.tree.palette), f.syl, expr));
+}
+function renderMembers() {
+  const box = $('#members'); box.textContent = '';
+  S.members.forEach((m, i) => {
+    const chip = document.createElement('span'); chip.className = 'chip';
+    const dot = document.createElement('i'); dot.style.background = m.tree.palette.c[0];
+    const x = document.createElement('button'); x.textContent = '✕'; x.title = t('removeTip');
+    x.onclick = () => removeMember(i, x);
+    chip.append(dot, m.f.name || t('noName'), x); box.append(chip);
+  });
+  const n = S.members.length;
+  $('#resTitle').innerHTML = n > 1 ? t('resN') : t('res1');
+  $('#title').placeholder = n > 1 ? t('titlePhN') : t('titlePh1');
+  $('#addBtn').hidden = n >= MAX_MEMBERS;
+  $('#replayBtn').hidden = !lastLocal();
+}
+function removeMember(i, btn) {
+  if (!btn.dataset.ok) { btn.dataset.ok = '1'; btn.textContent = t('removeConfirm'); setTimeout(() => { delete btn.dataset.ok; btn.textContent = '✕'; }, 2500); return; }
+  const [m] = S.members.splice(i, 1);
+  S.queue = S.queue.filter(x => x !== m);
+  if (S.growing === m) { S.growing = null; S.growStart = -1; if (S.src) { try { S.src.stop(); } catch {} } }
+  if (!S.members.length) { resetAll(); return; }
+  if (S.reading && S.reading.m === m) S.reading = { type: 'link' };
+  renderMembers(); renderReading(); $('#shareBox').hidden = true;
+  toast(t('tRemoved')(m.f.name || t('noName')));
+}
+function renderIntroText() {
+  const n = S.members.length;
+  $('#introTitle').innerHTML = n ? t('introTitleN') : t('introTitle0');
+  $('#introLead').textContent = n ? t('introLeadN')(n) : t('introLead0');
+  $('#backBtn').hidden = !n;
+}
+function showResult() { $('#intro').hidden = true; $('#result').hidden = false; $('#shareBox').hidden = true; renderMembers(); renderReading(); }
+function showIntro() { renderIntroText(); $('#who').value = ''; $('#intro').hidden = false; $('#result').hidden = true; }
+function resetAll() {
+  if (S.src) { try { S.src.stop(); } catch {} }
+  Object.assign(S, { members: [], title: '', date: '', growing: null, growStart: -1, queue: [], reading: null });
+  $('#title').value = ''; history.replaceState(null, '', location.pathname + location.search);
+  showIntro();
+}
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.title = t('docTitle');
+  $('#logo').innerHTML = t('logo');
+  $('#langBtn').textContent = t('langBtn');
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
+  document.querySelectorAll('[data-ph]').forEach(el => el.placeholder = t(el.dataset.ph));
+  const ul = $('#howList'); ul.innerHTML = t('how').map(s => `<li>${s}</li>`).join('');
+  renderIntroText();
+  if (S.members.length) { renderMembers(); renderReading(); }
+}
+$('#langBtn').onclick = () => {
+  LANG = LANG === 'ko' ? 'en' : 'ko';
+  try { localStorage.setItem('vb.lang', LANG); } catch {}
+  applyLang();
+};
+
+function useBuffer(buf, fallbackName) {
+  if (S.members.length >= MAX_MEMBERS) { toast(t('tMax')(MAX_MEMBERS)); return; }
+  let f;
+  try { f = analyze(buf); }
+  catch (e) { toast(e.message === 'quiet' ? t('tQuiet') : e.message === 'short' ? t('tShort') : t('tBad')); return; }
+  const name = ($('#who').value.trim() || fallbackName || t('me')).slice(0, 12);
+  const c = compact(f, name);
+  const m = makeMember(expand(c), c);   // 공유 링크로 열었을 때와 똑같은 나무가 되도록 압축본으로 만든다
+  m.audio = f.audio;
+  if (!S.date) S.date = today();
+  S.members.push(m);
+  S.reading = { type: 'member', m };
+  showResult(); grow(m);
+}
+async function decode(arrayBuf) { return await getCtx().decodeAudioData(arrayBuf); }
+
+/* ========== 입력: 녹음 / 파일 / 샘플 ========== */
+$('#recBtn').onclick = async () => {
+  const ctx = getCtx();
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true } }); }
+  catch { toast(t('tMic')); return; }
+  const rec = new MediaRecorder(stream), chunks = [];
+  const an = ctx.createAnalyser(); an.fftSize = 1024; ctx.createMediaStreamSource(stream).connect(an);
+  const buf = new Float32Array(an.fftSize), ring = $('#ring');
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach(tr => tr.stop()); $('#recOverlay').hidden = true;
+    try { useBuffer(await decode(await new Blob(chunks).arrayBuffer())); } catch { toast(t('tRecFail')); }
+  };
+  rec.start(); $('#recOverlay').hidden = false;
+  const t0 = performance.now();
+  (function meter() {
+    if (rec.state !== 'recording') return;
+    const left = 10 - (performance.now() - t0) / 1000;
+    if (left <= 0) { rec.stop(); return; }
+    an.getFloatTimeDomainData(buf); let e = 0; for (const v of buf) e += v * v; e = Math.sqrt(e / buf.length);
+    ring.textContent = Math.ceil(left); ring.style.boxShadow = `0 0 ${10 + e * 400}px rgba(255,184,203,${clamp(0.2 + e * 6)})`;
+    requestAnimationFrame(meter);
+  })();
+  $('#stopBtn').onclick = () => rec.state === 'recording' && rec.stop();
+};
+$('#file').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = '';
+  if (!file) return;
+  try { useBuffer(await decode(await file.arrayBuffer())); } catch { toast(t('tFileFail')); }
+};
+async function sampleVoice(k) {
+  // 말소리처럼 들리는 합성 목소리. k로 목소리 높이를 바꿔 매번 다른 사람처럼 만든다
+  const sr = 44100, dur = 3.2, off = new OfflineAudioContext(1, sr * dur, sr);
+  const o = off.createOscillator(); o.type = 'sawtooth';
+  const g = off.createGain(); g.gain.value = 0;
+  const f1 = off.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = 750; f1.Q.value = 4;
+  const f2 = off.createBiquadFilter(); f2.type = 'bandpass'; f2.frequency.value = 1250; f2.Q.value = 5;
+  o.connect(g); g.connect(f1); g.connect(f2); f1.connect(off.destination); f2.connect(off.destination);
+  const r = Math.random;
+  let at = 0.15;
+  for (let i = 0; i < 6 + Math.floor(r() * 5); i++) {
+    const f = (190 + r() * 90) * k, a = 0.5 + r() * 0.5;
+    o.frequency.setValueAtTime(f * 0.95, at); o.frequency.linearRampToValueAtTime(f * (1 + (r() - 0.4) * 0.2), at + 0.22);
+    g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(a * 0.5, at + 0.04); g.gain.linearRampToValueAtTime(0, at + 0.26);
+    at += 0.26 + r() * 0.12 + (r() < 0.15 ? 0.3 : 0);
+    if (at > dur - 0.3) break;
+  }
+  o.start(); return await off.startRendering();
+}
+$('#sampleBtn').onclick = async () => {
+  getCtx();
+  const i = S.members.length % 6, k = [1, 0.58, 1.25, 0.9, 0.5, 1.1][i];
+  useBuffer(await sampleVoice(k), t('sampleNames')[i]);
+};
+
+/* ========== 결과 화면 ========== */
+$('#title').oninput = e => S.title = e.target.value.trim();
+function setTheme(name) {
+  S.theme = THEMES[name] ? name : 'night';
+  document.querySelectorAll('#themeSeg button').forEach(x => x.classList.toggle('on', x.dataset.theme === S.theme));
+}
+$('#themeSeg').onclick = e => { const b = e.target.closest('button'); if (b) setTheme(b.dataset.theme); };
+$('#replayBtn').onclick = () => { const m = lastLocal(); if (m) grow(m); };
+$('#addBtn').onclick = showIntro;
+$('#backBtn').onclick = showResult;
+$('#newBtn').onclick = () => {
+  const b = $('#newBtn');
+  if (!b.dataset.ok) { b.dataset.ok = '1'; b.textContent = t('resetConfirm'); b.classList.add('danger');
+    setTimeout(() => { delete b.dataset.ok; b.textContent = t('reset'); b.classList.remove('danger'); }, 3000); return; }
+  delete b.dataset.ok; b.textContent = t('reset'); b.classList.remove('danger');
+  resetAll();
+};
+$('#shareBtn').onclick = async () => {
+  const url = location.href.split('#')[0] + '#f=' + encodeForest();
+  history.replaceState(null, '', url);
+  const names = S.members.map(m => m.f.name).join(', ');
+  if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    try { await navigator.share({ title: t('shareTitle'), text: t('shareText')(names), url }); return; } catch {}
+  }
+  $('#shareBox').hidden = false; const inp = $('#shareUrl'); inp.value = url; inp.select();
+  try { await navigator.clipboard.writeText(url); toast(t('tCopied')); }
+  catch { toast(t('tCopyManual')); }
+};
+$('#saveBtn').onclick = async () => {
+  try { await document.fonts.ready; } catch {}
+  const off = document.createElement('canvas'); off.width = 2250; off.height = 3000;
+  const c = off.getContext('2d'); c.scale(3, 3);
+  renderPoster(c, { ...S, members: S.members.map(m => ({ ...m, p: 1, rootU: 1 })) }, 0);
+  off.toBlob(blob => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `${t('filePrefix')}_${S.title || S.members.map(m => m.f.name).join('_') || 'voice'}.png`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast(t('tSaved'));
+  }, 'image/png');
+};
+
+/* ========== 공유 링크로 열었을 때 ========== */
+function loadFromHash() {
+  const h = location.hash;
+  if (!h.startsWith('#f=')) return;
+  try {
+    const o = decodeForest(h.slice(3));
+    const members = o.m.slice(0, MAX_MEMBERS).map(c => makeMember(expand(c), c));
+    S.members = members; S.title = typeof o.t === 'string' ? o.t.slice(0, 24) : ''; S.date = typeof o.dt === 'string' ? o.dt.slice(0, 16) : today();
+    setTheme(o.th); $('#title').value = S.title;
+    // 공유받은 숲은 한 그루씩 차례로 피어나게
+    members.forEach(m => { m.p = 0; m.rootU = 0; });
+    S.queue = members.slice();
+    S.reading = { type: 'link' };
+    showResult();
+  } catch { toast(t('tLinkFail')); }
+}
+
+fitCanvas();
+applyLang();
+loadFromHash();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
