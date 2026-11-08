@@ -543,7 +543,8 @@ function renderReading() {
   const m = rd.m, f = m.f, tn = t('tone'), ex = t('expr');
   const tone = !f.median ? tn.none : f.median < 160 ? tn.low : f.median < 220 ? tn.mid : tn.high;
   const expr = f.rangeSemi > 7 ? ex.wide : f.rangeSemi > 3 ? ex.mid : ex.calm;
-  setReading(t('readMember')(f.name, tone, palName(m.tree.palette), f.syl, expr));
+  const who = (f.name === T.ko.me || f.name === T.en.me) ? '' : f.name;   // 이름을 비워 기본값 '나/Me'가 된 경우엔 호칭 생략
+  setReading(t('readMember')(who, tone, palName(m.tree.palette), f.syl, expr));
 }
 function renderMembers() {
   const box = $('#members'); box.textContent = '';
