@@ -7,6 +7,7 @@ Live: https://bloom.stockmolt.ai
 - `index.html` 한 파일에 HTML·CSS·JS가 모두 들어 있음 (서버·빌드 없음)
 - `CNAME` GitHub Pages 사용자 도메인 설정 (지우지 말 것)
 - 녹음·분석은 모두 브라우저 안에서 처리. 목소리는 어디에도 전송하지 않음
+- 방문자 통계: Cloudflare Web Analytics (쿠키 없음, `</body>` 바로 앞 스크립트). 통계는 Cloudflare 대시보드 → Web Analytics에서 확인
 
 ## 주요 기능
 | 기능 | 설명 | 코드 위치 (검색어) |

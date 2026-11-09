@@ -200,7 +200,7 @@ const T = {
     introLeadN: n => `지금 ${n}그루가 자라고 있어요. 이름을 적고 목소리를 들려주면 숲에 새 나무가 자라요.`,
     whoLabel: '누구의 목소리인가요?', whoPh: '예) 엄마, 지우, 할아버지',
     rec: '🎙 지금 녹음하기 (최대 10초)', upload: '📁 음성 파일 올리기 (음성 메시지 등)', sample: '✨ 샘플 목소리로 보기', back: '← 숲으로 돌아가기',
-    privacy: '🔒 녹음과 분석은 모두 이 기기 안에서만 이뤄져요. 목소리는 어디에도 전송되지 않고, 공유 링크에는 나무 모양 정보만 담겨요.',
+    privacy: '🔒 녹음과 분석은 모두 이 기기 안에서만 이뤄져요. 목소리는 어디에도 전송되지 않고, 공유 링크에는 나무 모양 정보만 담겨요. 방문자 수만 익명으로 세요(쿠키 없음).',
     res1: '목소리가 <em>피었어요</em>', resN: '가족 숲이 <em>자라고 있어요</em>',
     membersLabel: '숲의 목소리들', titleLabel: '그림 제목', titlePh1: '예) 엄마의 목소리', titlePhN: '예) 우리 가족 숲',
     moodLabel: '분위기', night: '밤하늘', paper: '한지',
@@ -271,7 +271,7 @@ const T = {
     introLeadN: n => `${n} ${n === 1 ? 'tree is' : 'trees are'} growing. Type a name and share a voice to plant a new tree.`,
     whoLabel: 'Whose voice is this?', whoPh: 'e.g. Mom, Lily, Grandpa',
     rec: '🎙 Record now (up to 10s)', upload: '📁 Upload a voice file (voice memo, etc.)', sample: '✨ Try a sample voice', back: '← Back to the forest',
-    privacy: '🔒 Recording and analysis happen entirely on this device. Your voice is never uploaded — share links carry only the shape of the tree.',
+    privacy: '🔒 Recording and analysis happen entirely on this device. Your voice is never uploaded — share links carry only the shape of the tree. We only count visits anonymously (no cookies).',
     res1: 'Your voice has <em>bloomed</em>', resN: 'Your family forest is <em>growing</em>',
     membersLabel: 'Voices in this forest', titleLabel: 'Title', titlePh1: 'e.g. Mom’s Voice', titlePhN: 'e.g. Our Family Forest',
     moodLabel: 'Mood', night: 'Night sky', paper: 'Hanji paper',
@@ -1086,5 +1086,6 @@ if (location.hash.startsWith('#f=')) loadFromHash();
 else { let m = 'gift'; try { m = localStorage.getItem('vb.mode') || 'gift'; } catch {} setMode(m); }
 requestAnimationFrame(frame);
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f318c21148ea47e69024a69f692eb5b5"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
